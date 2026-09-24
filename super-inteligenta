@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Juridic Public - Verificator Termene și Clauze Abuzive | Cabinet de Avocat Coltuc</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f6f8;
+        }
+        h1, h2, h3 {
+            color: #1a252f;
+        }
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #34495e;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eef2f3;
+            border-left: 5px solid #2c3e50;
+            border-radius: 4px;
+            display: none;
+        }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .github-link {
+            display: inline-block;
+            background: #24292e;
+            color: #fff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .github-link:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Instrument Public: Verificator Termene și Clauze Abuzive</h1>
+        <p>Acest widget interactiv oferă clienților și practicienilor o estimare rapidă a termenului de prescripție extinctivă în materie de executare silită și un pre-test pentru identificarea clauzelor abuzive conform Legii nr. 193/2000.</p>
+        <p>Codul sursă complet, documentația API și instructajul de instalare sunt găzduite public pe:</p>
+        <a href="https://github.com/avocatcoltuc2026" class="github-link" target="_blank">GitHub / avocatcoltuc2026</a>
+    </div>
+
+    <!-- Widget Interactiv -->
+    <div class="card">
+        <h2>Widget Integrat pe Site</h2>
+        <div class="form-group">
+            <label for="calcType">Selectați tipul de verificare:</label>
+            <select id="calcType" onchange="toggleForm()">
+                <option value="prescriptie">Calcul Termen Prescripție Executare Silită</option>
+                <option value="clauze">Verificare Rapidă Clauze Abuzive</option>
+            </select>
+        </div>
+
+        <!-- Secțiunea Prescripție -->
+        <div id="sectionPrescriptie">
+            <div class="form-group">
+                <label for="dataAct">Data ultimului act de executare silită:</label>
+                <input type="date" id="dataAct">
+            </div>
+            <button onclick="calculeazaPrescriptie()">Calculează Termenul (3 ani)</button>
+        </div>
+
+        <!-- Secțiunea Clauze Abuzive -->
+        <div id="sectionClauze" style="display: none;">
+            <div class="form-group">
+                <label for="tipComision">Selectați tipul clauzei contractuale:</label>
+                <select id="tipComision">
+                    <option value="comision_risc">Comision de risc / administrare perceput lunar</option>
+                    <option value="risc_valutar">Clauză de risc valutar (în sarcina exclusivă a consumatorului)</option>
+                    <option value="pact_comisoriu">Pact comisoriu cu exigență unilaterală</option>
+                </select>
+            </div>
+            <button onclick="verificaClauza()">Verifică Gradul de Risc</button>
+        </div>
+
+        <div id="resultBox" class="result">
+            <h3 id="resultTitle">Rezultat Estimativ</h3>
+            <p id="resultText"></p>
+        </div>
+    </div>
+
+    <!-- Documentație API / Script -->
+    <div class="card">
+        <h2>Cod Sursă Widget & API (JavaScript / HTML)</h2>
+        <p>Puteți prelua scriptul pentru a-l integra pe orice platformă web proprie:</p>
+        <pre><code>&lt;!-- Widget Coltuc Legal Tools --&gt;
+&lt;div id="coltuc-legal-widget"&gt;
+  &lt;script&gt;
+    function calculeazaPrescriptie() {
+      const dataStr = document.getElementById('dataAct').value;
+      if (!dataStr) {
+        alert('Vă rugăm să selectați o dată validă.');
+        return;
+      }
+      const dataAct = new Date(dataStr);
+      const termenPrescriptie = new Date(dataAct);
+      termenPrescriptie.setFullYear(termenPrescriptie.getFullYear() + 3);
+      
+      const azi = new Date();
+      const estePrescris = azi > termenPrescriptie;
+
+      const resultBox = document.getElementById('resultBox');
+      const resultText = document.getElementById('resultText');
+      resultBox.style.display = 'block';
+      
+      if (estePrescris) {
+        resultText.innerHTML = "&lt;strong style='color: red;'&gt;Atenție:&lt;/strong&gt; Termenul general de prescripție de 3 ani (art. 706 Cod Procedură Civilă) pare să fie împlinit la data de " + termenPrescriptie.toLocaleDateString('ro-RO') + ". Se poate formula contestație la executare.";
+      } else {
+        resultText.innerHTML = "&lt;strong style='color: green;'&gt;Status:&lt;/strong&gt; Termenul de prescripție se împlinește la data de " + termenPrescriptie.toLocaleDateString('ro-RO') + ".";
+      }
+    }
+  &lt;/script&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const type = document.getElementById('calcType').value;
+            document.getElementById('resultBox').style.display = 'none';
+            if (type === 'prescriptie') {
+                document.getElementById('sectionPrescriptie').style.display = 'block';
+                document.getElementById('sectionClauze').style.display = 'none';
+            } else {
+                document.getElementById('sectionPrescriptie').style.display = 'none';
+                document.getElementById('sectionClauze').style.display = 'block';
+            }
+        }
+
+        function calculeazaPrescriptie() {
+            const dataStr = document.getElementById('dataAct').value;
+            if (!dataStr) {
+                alert('Vă rugăm să introduceți data ultimului act.');
+                return;
+            }
+            const dataAct = new Date(dataStr);
+            const termenPrescriptie = new Date(dataAct);
+            termenPrescriptie.setFullYear(termenPrescriptie.getFullYear() + 3);
+            
+            const azi = new Date();
+            const estePrescris = azi > termenPrescriptie;
+
+            const resultBox = document.getElementById('resultBox');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultText = document.getElementById('resultText');
+            
+            resultBox.style.display = 'block';
+            resultTitle.innerText = "Rezultat Calcul Prescripție (Art. 706 C.Pr.Civ.)";
+            
+            if (estePrescris) {
+                resultText.innerHTML = "<strong>Termen împlinit:</strong> Conform datelor introduse, termenul de 3 ani s-a împlinit la <strong>" + termenPrescriptie.toLocaleDateString('ro-RO') + "</strong>. Vă recomandăm consultarea unui avocat pentru introducerea contestației la executare.";
+            } else {
+                resultText.innerHTML = "<strong>În termen:</strong> Termenul de prescripție se împlinește la <strong>" + termenPrescriptie.toLocaleDateString('ro-RO') + "</strong>. Executarea se află în interiorul termenului legal.";
+            }
+        }
+
+        function verificaClauza() {
+            const selectie = document.getElementById('tipComision').value;
+            const resultBox = document.getElementById('resultBox');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultText = document.getElementById('resultText');
+            
+            resultBox.style.display = 'block';
+            resultTitle.innerText = "Evaluare Preliminară Clauză Abuzivă (Legea 193/2000)";
+
+            if (selectie === 'comision_risc' || selectie === 'risc_valutar') {
+                resultText.innerHTML = "<strong>Grad de risc ridicat (Caracter Abuziv Potențial):</strong> Această prevedere a fost sancționată constant de ÎCCJ și CJUE ca fiind abuzivă prin lipsa transparenței la contractare. Puteți solicita instanței constatarea nulității absolute și restituirea sumelor.";
+            } else {
+                resultText.innerHTML = "<strong>Necesită analiză individuală:</strong> Pactele comisorii necesită verificarea modului în care au fost activate de către creditor pentru a stabili conformitatea cu dispozițiile Codului Civil.";
+            }
+        }
+    </script>
+
+</body>
+</html>
